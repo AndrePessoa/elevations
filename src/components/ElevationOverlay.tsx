@@ -1,16 +1,17 @@
 import { useElevation } from '../context/ElevationContext';
 
 /**
- * Two translucent black layers used only when mode === 'shadow'.
+ * Two fixed full-screen layers that drive every elevation mode:
+ *   blur   → backdrop-filter: blur(...)
+ *   color  → backdrop-filter: saturate(...)
+ *   shadow → translucent background
  * Z-index sandwich:
- *   inactive card (1) | overlay-A (5) | active card (6) | popover (10) | overlay-B (15) | modal (100).
- * Active card sits above overlay-A so it's exempt from the popover-level
- * darken — same principle as filter: none in blur/color modes.
+ *   inactive card (1) | overlay-a (5) | active card (6) | popover (10) | overlay-b (15) | modal (100).
+ * Anything below an overlay's z-index is affected by it; the active card and
+ * popover sit above overlay-a so they stay sharp at the popover level.
  */
 export function ElevationOverlay() {
-  const { mode, hoveredCardId, openTag } = useElevation();
-
-  if (mode !== 'shadow') return null;
+  const { hoveredCardId, openTag } = useElevation();
 
   const aVisible = Boolean(hoveredCardId || openTag);
   const bVisible = Boolean(openTag);

@@ -57,7 +57,7 @@ body {
   border: 1px solid var(--page-border);
   border-radius: 999px;
   position: sticky;
-  z-index: 100;
+  z-index: 4;
   top: 10px;
 }
 
@@ -99,7 +99,7 @@ body {
   width: fit-content;
   max-width: 100%;
   position: sticky;
-  z-index: 100;
+  z-index: 4;
   top: 10px;
 }
 
@@ -179,10 +179,6 @@ body {
 }
 
 /* ---------- Tag card ---------- */
-.tag-card-wrapper {
-  position: relative;
-}
-
 .tag-card {
   position: relative;
   z-index: 1;
@@ -196,7 +192,6 @@ body {
   background: var(--card-bg);
   color: var(--card-text);
   transition:
-    filter 200ms ease,
     transform 160ms ease,
     box-shadow 200ms ease;
   cursor: default;
@@ -213,11 +208,12 @@ body {
 }
 
 .tag-card[data-active="true"] {
-  /* Lift above shadow-mode overlay-a (z-index 5) so the hovered card is
-   * exempt from the popover-level treatment, mirroring how blur/color modes
-   * give the active card filter: none. Stays below overlay-b (15) so the
-   * dialog level still cumulates on it. */
-  z-index: 6;
+  /* Shadow-mode-only lift: sit above overlay-a (z-index 5) so the hovered
+   * card isn't darkened at the popover level, but stay below overlay-b (15)
+   * so the dialog level still cumulates on it. In blur/color modes the
+   * active card is filtered along with its peers — the popover is the only
+   * thing that stays sharp. */
+  z-index: 8;
   box-shadow: 0 4px 12px oklch(0 0 0 / 0.08);
 }
 
@@ -267,13 +263,13 @@ body {
 }
 
 /* ---------- Popover ---------- */
+/* Portaled to <body>; `top` and `left` are written inline by Popover.tsx
+ * from the active card's bounding rect. */
 .popover {
-  position: absolute;
+  position: fixed;
   z-index: 10;
-  top: calc(100% + 8px);
-  left: 50%;
   transform: translateX(-50%);
-  min-width: 220px;
+  min-width: 275px;
   padding: 12px;
   border-radius: 12px;
   background: var(--pop-bg);
@@ -285,7 +281,6 @@ body {
   flex-direction: column;
   gap: 10px;
   animation: pop-in 140ms ease-out both;
-  transition: filter 200ms ease;
 }
 
 .popover-arrow {
@@ -580,14 +575,28 @@ body {
   }
 }
 
-/* ---------- Shadow-mode overlays ---------- */
+/* ---------- Elevation modes (overlays) ---------- */
+
+/* Two fixed full-screen overlays drive every mode. Each one carries a mode-
+ * specific visual:
+ *   blur   → backdrop-filter: blur(...)
+ *   color  → backdrop-filter: saturate(...)
+ *   shadow → translucent black background
+ * The z-index sandwich decides what's affected:
+ *   inactive card (1) | overlay-a (5) | active card (6) | popover (10)
+ *   | overlay-b (15)  | modal (100)
+ * Anything below an overlay's z-index is filtered through it; anything above
+ * renders sharp on top. The active card (z=6) and popover (z=10) sit above
+ * overlay-a, so they stay untouched at the popover level — and both fall
+ * below overlay-b, so the dialog level cumulates on them. */
+
 .elevation-overlay {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: oklch(0 0 0 / 0.3);
-  opacity: 0;
-  transition: opacity 200ms ease;
+  transition:
+    backdrop-filter 200ms ease,
+    background 200ms ease;
 }
 
 .elevation-overlay-a {
@@ -597,48 +606,23 @@ body {
   z-index: 15;
 }
 
-.elevation-overlay[data-visible="true"] {
-  opacity: 1;
+/* Blur mode */
+[data-mode="blur"] .elevation-overlay-a[data-visible="true"] {
+  backdrop-filter: blur(2px);
+}
+[data-mode="blur"] .elevation-overlay-b[data-visible="true"] {
+  backdrop-filter: blur(4px);
 }
 
-/* ---------- Elevation modes (filters) ---------- */
-
-/* Blur mode: lower layers blur, accumulating per opened level. */
-[data-mode="blur"][data-popover-open="true"] .tag-card {
-  filter: blur(2px);
+/* Color mode */
+[data-mode="color"] .elevation-overlay-a[data-visible="true"] {
+  backdrop-filter: saturate(0.55);
 }
-[data-mode="blur"][data-popover-open="true"] .tag-card[data-active="true"] {
-  filter: none;
-}
-[data-mode="blur"][data-dialog-open="true"] .tag-card {
-  filter: blur(4px);
-}
-[data-mode="blur"][data-dialog-open="true"] .tag-card[data-active="true"] {
-  filter: blur(4px);
-}
-[data-mode="blur"][data-dialog-open="true"] .popover {
-  filter: blur(2px);
+[data-mode="color"] .elevation-overlay-b[data-visible="true"] {
+  backdrop-filter: saturate(0.2);
 }
 
-/* Color mode: lower layers desaturate, accumulating per opened level. */
-[data-mode="color"][data-popover-open="true"] .tag-card {
-  filter: saturate(0.55);
-}
-[data-mode="color"][data-popover-open="true"] .tag-card[data-active="true"] {
-  filter: none;
-}
-[data-mode="color"][data-dialog-open="true"] .tag-card {
-  filter: saturate(0.2);
-}
-[data-mode="color"][data-dialog-open="true"] .tag-card[data-active="true"] {
-  filter: saturate(0.2);
-}
-[data-mode="color"][data-dialog-open="true"] .popover {
-  filter: saturate(0.55);
-}
-
-/* Shadow mode: filters off — overlays handle the visual stacking. */
-[data-mode="shadow"] .tag-card,
-[data-mode="shadow"] .popover {
-  filter: none;
+/* Shadow mode */
+[data-mode="shadow"] .elevation-overlay[data-visible="true"] {
+  background: oklch(0 0 0 / 0.3);
 }

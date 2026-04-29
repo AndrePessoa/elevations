@@ -1,15 +1,51 @@
+import { useLayoutEffect, useState, type RefObject } from 'react';
+import { createPortal } from 'react-dom';
 import type { Tag } from '../types';
 import { useElevation } from '../context/ElevationContext';
 
 interface PopoverProps {
   tag: Tag;
+  anchorRef: RefObject<HTMLElement | null>;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
-export function Popover({ tag }: PopoverProps) {
+export function Popover({ tag, anchorRef, onMouseEnter, onMouseLeave }: PopoverProps) {
   const { setOpenTag } = useElevation();
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
 
-  return (
-    <div className="popover" data-cat={tag.category} data-tag={tag.name} role="dialog" aria-label={`Actions for <${tag.name}>`}>
+  useLayoutEffect(() => {
+    const update = () => {
+      const el = anchorRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom + 8,
+        left: rect.left + rect.width / 2,
+      });
+    };
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [anchorRef]);
+
+  if (!coords) return null;
+
+  return createPortal(
+    <div
+      className="popover"
+      data-cat={tag.category}
+      data-tag={tag.name}
+      role="dialog"
+      aria-label={`Actions for <${tag.name}>`}
+      style={{ top: coords.top, left: coords.left }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div className="popover-arrow" aria-hidden />
       <div className="popover-header">
         <code className="popover-tag">{`<${tag.name} />`}</code>
@@ -41,6 +77,7 @@ export function Popover({ tag }: PopoverProps) {
           Mozilla ↗
         </a>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

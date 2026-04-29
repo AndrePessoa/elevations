@@ -12,6 +12,7 @@ const CLOSE_DELAY_MS = 120;
 export function TagCard({ tag }: TagCardProps) {
   const { hoveredCardId, setHoveredCardId, openTag } = useElevation();
   const isActive = hoveredCardId === tag.name;
+  const cardRef = useRef<HTMLElement>(null);
   const closeTimer = useRef<number | null>(null);
 
   const cancelClose = () => {
@@ -43,21 +44,27 @@ export function TagCard({ tag }: TagCardProps) {
   };
 
   return (
-    <div
-      className="tag-card-wrapper"
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
-    >
+    <>
       <article
+        ref={cardRef}
         className="tag-card"
         data-cat={tag.category}
         data-tag={tag.name}
         data-active={isActive ? 'true' : undefined}
         aria-label={`<${tag.name} /> — ${tag.type}`}
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
       >
         <code className="tag-card-code">{`<${tag.name} />`}</code>
       </article>
-      {isActive ? <Popover tag={tag} /> : null}
-    </div>
+      {isActive ? (
+        <Popover
+          tag={tag}
+          anchorRef={cardRef}
+          onMouseEnter={handleEnter}
+          onMouseLeave={handleLeave}
+        />
+      ) : null}
+    </>
   );
 }
