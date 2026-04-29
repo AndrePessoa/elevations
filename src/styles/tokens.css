@@ -1,0 +1,255 @@
+/* OKLCH-only color tokens.
+ *
+ * Per the design rule: a given visual slot (card-bg, popover-border, title,
+ * accent, …) uses the same lightness AND the same chroma in every category.
+ * The only thing that changes between categories is the hue.
+ *
+ *   slot ──> shared L + shared C
+ *   category ──> hue
+ *   token = oklch(slot.L  slot.C  category.h)
+ */
+
+:root {
+  /* ---------- Page chrome ---------- */
+  --page-bg: oklch(0.84 0.03 195.73);
+  --page-fg: oklch(0.22 0.02 250);
+  --page-muted: oklch(0.55 0.02 250);
+  --page-border: oklch(0.9 0.01 250);
+
+  /* ---------- Slot lightness + chroma (shared across all categories) ---------- */
+  /* Surfaces (the three elevation levels) */
+  --slot-card-bg-l: 0.96;
+  --slot-card-bg-c: 0.05;
+  --slot-popover-bg-l: 0.91;
+  --slot-popover-bg-c: 0.08;
+  --slot-dialog-bg-l: 0.84;
+  --slot-dialog-bg-c: 0.11;
+
+  /* Borders for each elevation level */
+  --slot-card-border-l: 0.78;
+  --slot-card-border-c: 0.07;
+  --slot-popover-border-l: 0.72;
+  --slot-popover-border-c: 0.09;
+  --slot-dialog-border-l: 0.62;
+  --slot-dialog-border-c: 0.11;
+
+  /* Foreground colors */
+  --slot-title-l: 0.32;
+  --slot-title-c: 0.13;
+  --slot-text-l: 0.29;
+  --slot-text-c: 0.05;
+  --slot-accent-l: 0.52;
+  --slot-accent-c: 0.17;
+
+  /* Hover tint for popover actions: a deeper tint of popover-bg */
+  --slot-accent-tint-l: 0.86;
+  --slot-accent-tint-c: 0.1;
+
+  /* ---------- Category hues (the only per-category dimension) ---------- */
+  --cat-structure-h: 250;
+  --cat-multimedia-h: 305;
+  --cat-text-h: 60;
+  --cat-semantic-h: 150;
+  --cat-interactive-h: 20;
+  --cat-misc-h: 195;
+
+  /* ---------- structure ---------- */
+  --cat-structure-card-bg: oklch(
+    var(--slot-card-bg-l) var(--slot-card-bg-c) var(--cat-structure-h)
+  );
+  --cat-structure-popover-bg: oklch(
+    var(--slot-popover-bg-l) var(--slot-popover-bg-c) var(--cat-structure-h)
+  );
+  --cat-structure-dialog-bg: oklch(
+    var(--slot-dialog-bg-l) var(--slot-dialog-bg-c) var(--cat-structure-h)
+  );
+  --cat-structure-card-border: oklch(
+    var(--slot-card-border-l) var(--slot-card-border-c) var(--cat-structure-h)
+  );
+  --cat-structure-popover-border: oklch(
+    var(--slot-popover-border-l) var(--slot-popover-border-c)
+      var(--cat-structure-h)
+  );
+  --cat-structure-dialog-border: oklch(
+    var(--slot-dialog-border-l) var(--slot-dialog-border-c)
+      var(--cat-structure-h)
+  );
+  --cat-structure-title: oklch(
+    var(--slot-title-l) var(--slot-title-c) var(--cat-structure-h)
+  );
+  --cat-structure-text: oklch(
+    var(--slot-text-l) var(--slot-text-c) var(--cat-structure-h)
+  );
+  --cat-structure-accent: oklch(
+    var(--slot-accent-l) var(--slot-accent-c) var(--cat-structure-h)
+  );
+  --cat-structure-accent-tint: oklch(
+    var(--slot-accent-tint-l) var(--slot-accent-tint-c) var(--cat-structure-h)
+  );
+
+  /* ---------- multimedia ---------- */
+  --cat-multimedia-card-bg: oklch(
+    var(--slot-card-bg-l) var(--slot-card-bg-c) var(--cat-multimedia-h)
+  );
+  --cat-multimedia-popover-bg: oklch(
+    var(--slot-popover-bg-l) var(--slot-popover-bg-c) var(--cat-multimedia-h)
+  );
+  --cat-multimedia-dialog-bg: oklch(
+    var(--slot-dialog-bg-l) var(--slot-dialog-bg-c) var(--cat-multimedia-h)
+  );
+  --cat-multimedia-card-border: oklch(
+    var(--slot-card-border-l) var(--slot-card-border-c) var(--cat-multimedia-h)
+  );
+  --cat-multimedia-popover-border: oklch(
+    var(--slot-popover-border-l) var(--slot-popover-border-c)
+      var(--cat-multimedia-h)
+  );
+  --cat-multimedia-dialog-border: oklch(
+    var(--slot-dialog-border-l) var(--slot-dialog-border-c)
+      var(--cat-multimedia-h)
+  );
+  --cat-multimedia-title: oklch(
+    var(--slot-title-l) var(--slot-title-c) var(--cat-multimedia-h)
+  );
+  --cat-multimedia-text: oklch(
+    var(--slot-text-l) var(--slot-text-c) var(--cat-multimedia-h)
+  );
+  --cat-multimedia-accent: oklch(
+    var(--slot-accent-l) var(--slot-accent-c) var(--cat-multimedia-h)
+  );
+  --cat-multimedia-accent-tint: oklch(
+    var(--slot-accent-tint-l) var(--slot-accent-tint-c) var(--cat-multimedia-h)
+  );
+
+  /* ---------- text ---------- */
+  --cat-text-card-bg: oklch(
+    var(--slot-card-bg-l) var(--slot-card-bg-c) var(--cat-text-h)
+  );
+  --cat-text-popover-bg: oklch(
+    var(--slot-popover-bg-l) var(--slot-popover-bg-c) var(--cat-text-h)
+  );
+  --cat-text-dialog-bg: oklch(
+    var(--slot-dialog-bg-l) var(--slot-dialog-bg-c) var(--cat-text-h)
+  );
+  --cat-text-card-border: oklch(
+    var(--slot-card-border-l) var(--slot-card-border-c) var(--cat-text-h)
+  );
+  --cat-text-popover-border: oklch(
+    var(--slot-popover-border-l) var(--slot-popover-border-c) var(--cat-text-h)
+  );
+  --cat-text-dialog-border: oklch(
+    var(--slot-dialog-border-l) var(--slot-dialog-border-c) var(--cat-text-h)
+  );
+  --cat-text-title: oklch(
+    var(--slot-title-l) var(--slot-title-c) var(--cat-text-h)
+  );
+  --cat-text-text: oklch(
+    var(--slot-text-l) var(--slot-text-c) var(--cat-text-h)
+  );
+  --cat-text-accent: oklch(
+    var(--slot-accent-l) var(--slot-accent-c) var(--cat-text-h)
+  );
+  --cat-text-accent-tint: oklch(
+    var(--slot-accent-tint-l) var(--slot-accent-tint-c) var(--cat-text-h)
+  );
+
+  /* ---------- semantic ---------- */
+  --cat-semantic-card-bg: oklch(
+    var(--slot-card-bg-l) var(--slot-card-bg-c) var(--cat-semantic-h)
+  );
+  --cat-semantic-popover-bg: oklch(
+    var(--slot-popover-bg-l) var(--slot-popover-bg-c) var(--cat-semantic-h)
+  );
+  --cat-semantic-dialog-bg: oklch(
+    var(--slot-dialog-bg-l) var(--slot-dialog-bg-c) var(--cat-semantic-h)
+  );
+  --cat-semantic-card-border: oklch(
+    var(--slot-card-border-l) var(--slot-card-border-c) var(--cat-semantic-h)
+  );
+  --cat-semantic-popover-border: oklch(
+    var(--slot-popover-border-l) var(--slot-popover-border-c)
+      var(--cat-semantic-h)
+  );
+  --cat-semantic-dialog-border: oklch(
+    var(--slot-dialog-border-l) var(--slot-dialog-border-c)
+      var(--cat-semantic-h)
+  );
+  --cat-semantic-title: oklch(
+    var(--slot-title-l) var(--slot-title-c) var(--cat-semantic-h)
+  );
+  --cat-semantic-text: oklch(
+    var(--slot-text-l) var(--slot-text-c) var(--cat-semantic-h)
+  );
+  --cat-semantic-accent: oklch(
+    var(--slot-accent-l) var(--slot-accent-c) var(--cat-semantic-h)
+  );
+  --cat-semantic-accent-tint: oklch(
+    var(--slot-accent-tint-l) var(--slot-accent-tint-c) var(--cat-semantic-h)
+  );
+
+  /* ---------- interactive ---------- */
+  --cat-interactive-card-bg: oklch(
+    var(--slot-card-bg-l) var(--slot-card-bg-c) var(--cat-interactive-h)
+  );
+  --cat-interactive-popover-bg: oklch(
+    var(--slot-popover-bg-l) var(--slot-popover-bg-c) var(--cat-interactive-h)
+  );
+  --cat-interactive-dialog-bg: oklch(
+    var(--slot-dialog-bg-l) var(--slot-dialog-bg-c) var(--cat-interactive-h)
+  );
+  --cat-interactive-card-border: oklch(
+    var(--slot-card-border-l) var(--slot-card-border-c) var(--cat-interactive-h)
+  );
+  --cat-interactive-popover-border: oklch(
+    var(--slot-popover-border-l) var(--slot-popover-border-c)
+      var(--cat-interactive-h)
+  );
+  --cat-interactive-dialog-border: oklch(
+    var(--slot-dialog-border-l) var(--slot-dialog-border-c)
+      var(--cat-interactive-h)
+  );
+  --cat-interactive-title: oklch(
+    var(--slot-title-l) var(--slot-title-c) var(--cat-interactive-h)
+  );
+  --cat-interactive-text: oklch(
+    var(--slot-text-l) var(--slot-text-c) var(--cat-interactive-h)
+  );
+  --cat-interactive-accent: oklch(
+    var(--slot-accent-l) var(--slot-accent-c) var(--cat-interactive-h)
+  );
+  --cat-interactive-accent-tint: oklch(
+    var(--slot-accent-tint-l) var(--slot-accent-tint-c) var(--cat-interactive-h)
+  );
+
+  /* ---------- misc ---------- */
+  --cat-misc-card-bg: oklch(
+    var(--slot-card-bg-l) var(--slot-card-bg-c) var(--cat-misc-h)
+  );
+  --cat-misc-popover-bg: oklch(
+    var(--slot-popover-bg-l) var(--slot-popover-bg-c) var(--cat-misc-h)
+  );
+  --cat-misc-dialog-bg: oklch(
+    var(--slot-dialog-bg-l) var(--slot-dialog-bg-c) var(--cat-misc-h)
+  );
+  --cat-misc-card-border: oklch(
+    var(--slot-card-border-l) var(--slot-card-border-c) var(--cat-misc-h)
+  );
+  --cat-misc-popover-border: oklch(
+    var(--slot-popover-border-l) var(--slot-popover-border-c) var(--cat-misc-h)
+  );
+  --cat-misc-dialog-border: oklch(
+    var(--slot-dialog-border-l) var(--slot-dialog-border-c) var(--cat-misc-h)
+  );
+  --cat-misc-title: oklch(
+    var(--slot-title-l) var(--slot-title-c) var(--cat-misc-h)
+  );
+  --cat-misc-text: oklch(
+    var(--slot-text-l) var(--slot-text-c) var(--cat-misc-h)
+  );
+  --cat-misc-accent: oklch(
+    var(--slot-accent-l) var(--slot-accent-c) var(--cat-misc-h)
+  );
+  --cat-misc-accent-tint: oklch(
+    var(--slot-accent-tint-l) var(--slot-accent-tint-c) var(--cat-misc-h)
+  );
+}

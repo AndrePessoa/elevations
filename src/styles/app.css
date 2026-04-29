@@ -1,0 +1,644 @@
+/* Elevations demo — layout, components, and the three elevation modes.
+ * All color literals live in tokens.css and are OKLCH only.
+ */
+
+body {
+  background: var(--page-bg);
+  color: var(--page-fg);
+}
+
+/* ---------- Page chrome ---------- */
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-title-mark {
+  font-size: 22px;
+  color: var(--page-muted);
+}
+
+.page-subtitle {
+  margin: 0;
+  color: var(--page-muted);
+  font-size: 14px;
+}
+
+/* ---------- Mode selector ---------- */
+.mode-selector {
+  display: inline-flex;
+  padding: 4px;
+  background: oklch(0.97 0.005 250);
+  border: 1px solid var(--page-border);
+  border-radius: 999px;
+  position: sticky;
+  z-index: 100;
+  top: 10px;
+}
+
+.mode-selector-option {
+  appearance: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--page-muted);
+  transition:
+    color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.mode-selector-option:hover {
+  color: var(--page-fg);
+}
+
+.mode-selector-option[data-active="true"] {
+  color: oklch(0.22 0.02 250);
+  background: oklch(1 0 0);
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 0.08),
+    0 0 0 1px var(--page-border);
+}
+
+/* ---------- Category filter ---------- */
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 20px;
+  background: oklch(0.97 0.005 250);
+  border: 1px solid var(--page-border);
+  border-radius: 999px;
+  width: fit-content;
+  max-width: 100%;
+  position: sticky;
+  z-index: 100;
+  top: 10px;
+}
+
+.category-filter-option {
+  appearance: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--page-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    opacity 120ms ease;
+}
+
+.category-filter-option:hover {
+  color: var(--page-fg);
+}
+
+.category-filter-option:not([data-active="true"]) {
+  opacity: 0.55;
+}
+
+.category-filter-option[data-cat="structure"][data-active="true"] {
+  background: var(--cat-structure-card-bg);
+  color: var(--cat-structure-title);
+  border-color: var(--cat-structure-card-border);
+}
+.category-filter-option[data-cat="multimedia"][data-active="true"] {
+  background: var(--cat-multimedia-card-bg);
+  color: var(--cat-multimedia-title);
+  border-color: var(--cat-multimedia-card-border);
+}
+.category-filter-option[data-cat="text"][data-active="true"] {
+  background: var(--cat-text-card-bg);
+  color: var(--cat-text-title);
+  border-color: var(--cat-text-card-border);
+}
+.category-filter-option[data-cat="semantic"][data-active="true"] {
+  background: var(--cat-semantic-card-bg);
+  color: var(--cat-semantic-title);
+  border-color: var(--cat-semantic-card-border);
+}
+.category-filter-option[data-cat="interactive"][data-active="true"] {
+  background: var(--cat-interactive-card-bg);
+  color: var(--cat-interactive-title);
+  border-color: var(--cat-interactive-card-border);
+}
+.category-filter-option[data-cat="misc"][data-active="true"] {
+  background: var(--cat-misc-card-bg);
+  color: var(--cat-misc-title);
+  border-color: var(--cat-misc-card-border);
+}
+
+/* ---------- Grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 540px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Tag card ---------- */
+.tag-card-wrapper {
+  position: relative;
+}
+
+.tag-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 84px;
+  padding: 16px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: var(--card-bg);
+  color: var(--card-text);
+  transition:
+    filter 200ms ease,
+    transform 160ms ease,
+    box-shadow 200ms ease;
+  cursor: default;
+}
+
+.tag-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
+}
+
+.tag-card:focus-visible {
+  outline: 2px solid var(--card-border);
+  outline-offset: 2px;
+}
+
+.tag-card[data-active="true"] {
+  /* Lift above shadow-mode overlay-a (z-index 5) so the hovered card is
+   * exempt from the popover-level treatment, mirroring how blur/color modes
+   * give the active card filter: none. Stays below overlay-b (15) so the
+   * dialog level still cumulates on it. */
+  z-index: 6;
+  box-shadow: 0 4px 12px oklch(0 0 0 / 0.08);
+}
+
+.tag-card-code {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--card-title);
+  user-select: none;
+}
+
+/* category bindings (cards) */
+.tag-card[data-cat="structure"] {
+  --card-bg: var(--cat-structure-card-bg);
+  --card-border: var(--cat-structure-card-border);
+  --card-title: var(--cat-structure-title);
+  --card-text: var(--cat-structure-text);
+}
+.tag-card[data-cat="multimedia"] {
+  --card-bg: var(--cat-multimedia-card-bg);
+  --card-border: var(--cat-multimedia-card-border);
+  --card-title: var(--cat-multimedia-title);
+  --card-text: var(--cat-multimedia-text);
+}
+.tag-card[data-cat="text"] {
+  --card-bg: var(--cat-text-card-bg);
+  --card-border: var(--cat-text-card-border);
+  --card-title: var(--cat-text-title);
+  --card-text: var(--cat-text-text);
+}
+.tag-card[data-cat="semantic"] {
+  --card-bg: var(--cat-semantic-card-bg);
+  --card-border: var(--cat-semantic-card-border);
+  --card-title: var(--cat-semantic-title);
+  --card-text: var(--cat-semantic-text);
+}
+.tag-card[data-cat="interactive"] {
+  --card-bg: var(--cat-interactive-card-bg);
+  --card-border: var(--cat-interactive-card-border);
+  --card-title: var(--cat-interactive-title);
+  --card-text: var(--cat-interactive-text);
+}
+.tag-card[data-cat="misc"] {
+  --card-bg: var(--cat-misc-card-bg);
+  --card-border: var(--cat-misc-card-border);
+  --card-title: var(--cat-misc-title);
+  --card-text: var(--cat-misc-text);
+}
+
+/* ---------- Popover ---------- */
+.popover {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 220px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--pop-bg);
+  color: var(--pop-text);
+  box-shadow:
+    0 12px 28px oklch(0 0 0 / 0.12),
+    0 2px 6px oklch(0 0 0 / 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: pop-in 140ms ease-out both;
+  transition: filter 200ms ease;
+}
+
+.popover-arrow {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: var(--pop-bg);
+}
+
+.popover-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.popover-tag {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pop-title);
+}
+
+.popover-type {
+  font-size: 11px;
+  color: var(--pop-text);
+  opacity: 0.8;
+}
+
+.popover-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.popover-action {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 7px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pop-title);
+  background: var(--pop-bg);
+  border: 1px solid var(--pop-border);
+  transition:
+    background 120ms ease,
+    transform 80ms ease;
+}
+
+.popover-action:hover {
+  background: var(--pop-accent-tint);
+}
+
+.popover-action:active {
+  transform: translateY(1px);
+}
+
+/* category bindings (popover) */
+.popover[data-cat="structure"] {
+  --pop-bg: var(--cat-structure-popover-bg);
+  --pop-border: var(--cat-structure-popover-border);
+  --pop-title: var(--cat-structure-title);
+  --pop-text: var(--cat-structure-text);
+  --pop-accent-tint: var(--cat-structure-accent-tint);
+}
+.popover[data-cat="multimedia"] {
+  --pop-bg: var(--cat-multimedia-popover-bg);
+  --pop-border: var(--cat-multimedia-popover-border);
+  --pop-title: var(--cat-multimedia-title);
+  --pop-text: var(--cat-multimedia-text);
+  --pop-accent-tint: var(--cat-multimedia-accent-tint);
+}
+.popover[data-cat="text"] {
+  --pop-bg: var(--cat-text-popover-bg);
+  --pop-border: var(--cat-text-popover-border);
+  --pop-title: var(--cat-text-title);
+  --pop-text: var(--cat-text-text);
+  --pop-accent-tint: var(--cat-text-accent-tint);
+}
+.popover[data-cat="semantic"] {
+  --pop-bg: var(--cat-semantic-popover-bg);
+  --pop-border: var(--cat-semantic-popover-border);
+  --pop-title: var(--cat-semantic-title);
+  --pop-text: var(--cat-semantic-text);
+  --pop-accent-tint: var(--cat-semantic-accent-tint);
+}
+.popover[data-cat="interactive"] {
+  --pop-bg: var(--cat-interactive-popover-bg);
+  --pop-border: var(--cat-interactive-popover-border);
+  --pop-title: var(--cat-interactive-title);
+  --pop-text: var(--cat-interactive-text);
+  --pop-accent-tint: var(--cat-interactive-accent-tint);
+}
+.popover[data-cat="misc"] {
+  --pop-bg: var(--cat-misc-popover-bg);
+  --pop-border: var(--cat-misc-popover-border);
+  --pop-title: var(--cat-misc-title);
+  --pop-text: var(--cat-misc-text);
+  --pop-accent-tint: var(--cat-misc-accent-tint);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ---------- Modal ---------- */
+/* The backdrop is just a click-capture surface. Each mode produces its own
+ * "between popover and dialog" effect elsewhere:
+ *   blur   -> filter: blur on .popover and .tag-card
+ *   color  -> filter: saturate on .popover and .tag-card
+ *   shadow -> elevation-overlay-b (z-index 15) between popover and modal
+ * so the backdrop itself stays transparent in every mode. */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: transparent;
+  animation: fade-in 160ms ease-out both;
+}
+
+.modal {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border-radius: 16px;
+  background: var(--mod-bg);
+  color: var(--mod-text);
+  box-shadow:
+    0 32px 80px oklch(0 0 0 / 0.3),
+    0 4px 12px oklch(0 0 0 / 0.1);
+  animation: modal-in 200ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--mod-border);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--mod-title);
+}
+
+.modal-close {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--mod-text);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: oklch(0 0 0 / 0.06);
+}
+
+.modal-body {
+  padding: 16px 20px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-row h3 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mod-title);
+  opacity: 0.7;
+}
+
+.modal-row p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-usage {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: oklch(0 0 0 / 0.06);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 12px 20px 20px;
+  border-top: 1px solid var(--mod-border);
+  margin-top: 8px;
+}
+
+.modal-link {
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--mod-title);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mod-border);
+  background: oklch(1 0 0 / 0.3);
+}
+
+.modal-link:hover {
+  background: oklch(1 0 0 / 0.55);
+}
+
+/* category bindings (modal) */
+.modal[data-cat="structure"] {
+  --mod-bg: var(--cat-structure-dialog-bg);
+  --mod-border: var(--cat-structure-dialog-border);
+  --mod-title: var(--cat-structure-title);
+  --mod-text: var(--cat-structure-text);
+}
+.modal[data-cat="multimedia"] {
+  --mod-bg: var(--cat-multimedia-dialog-bg);
+  --mod-border: var(--cat-multimedia-dialog-border);
+  --mod-title: var(--cat-multimedia-title);
+  --mod-text: var(--cat-multimedia-text);
+}
+.modal[data-cat="text"] {
+  --mod-bg: var(--cat-text-dialog-bg);
+  --mod-border: var(--cat-text-dialog-border);
+  --mod-title: var(--cat-text-title);
+  --mod-text: var(--cat-text-text);
+}
+.modal[data-cat="semantic"] {
+  --mod-bg: var(--cat-semantic-dialog-bg);
+  --mod-border: var(--cat-semantic-dialog-border);
+  --mod-title: var(--cat-semantic-title);
+  --mod-text: var(--cat-semantic-text);
+}
+.modal[data-cat="interactive"] {
+  --mod-bg: var(--cat-interactive-dialog-bg);
+  --mod-border: var(--cat-interactive-dialog-border);
+  --mod-title: var(--cat-interactive-title);
+  --mod-text: var(--cat-interactive-text);
+}
+.modal[data-cat="misc"] {
+  --mod-bg: var(--cat-misc-dialog-bg);
+  --mod-border: var(--cat-misc-dialog-border);
+  --mod-title: var(--cat-misc-title);
+  --mod-text: var(--cat-misc-text);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- Shadow-mode overlays ---------- */
+.elevation-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: oklch(0 0 0 / 0.3);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.elevation-overlay-a {
+  z-index: 5;
+}
+.elevation-overlay-b {
+  z-index: 15;
+}
+
+.elevation-overlay[data-visible="true"] {
+  opacity: 1;
+}
+
+/* ---------- Elevation modes (filters) ---------- */
+
+/* Blur mode: lower layers blur, accumulating per opened level. */
+[data-mode="blur"][data-popover-open="true"] .tag-card {
+  filter: blur(2px);
+}
+[data-mode="blur"][data-popover-open="true"] .tag-card[data-active="true"] {
+  filter: none;
+}
+[data-mode="blur"][data-dialog-open="true"] .tag-card {
+  filter: blur(4px);
+}
+[data-mode="blur"][data-dialog-open="true"] .tag-card[data-active="true"] {
+  filter: blur(4px);
+}
+[data-mode="blur"][data-dialog-open="true"] .popover {
+  filter: blur(2px);
+}
+
+/* Color mode: lower layers desaturate, accumulating per opened level. */
+[data-mode="color"][data-popover-open="true"] .tag-card {
+  filter: saturate(0.55);
+}
+[data-mode="color"][data-popover-open="true"] .tag-card[data-active="true"] {
+  filter: none;
+}
+[data-mode="color"][data-dialog-open="true"] .tag-card {
+  filter: saturate(0.2);
+}
+[data-mode="color"][data-dialog-open="true"] .tag-card[data-active="true"] {
+  filter: saturate(0.2);
+}
+[data-mode="color"][data-dialog-open="true"] .popover {
+  filter: saturate(0.55);
+}
+
+/* Shadow mode: filters off — overlays handle the visual stacking. */
+[data-mode="shadow"] .tag-card,
+[data-mode="shadow"] .popover {
+  filter: none;
+}
